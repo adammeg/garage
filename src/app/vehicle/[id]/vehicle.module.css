@@ -1,0 +1,57 @@
+.page {
+  --ink: #172b32;
+  --muted: #73858a;
+  --line: #e3e9e7;
+  min-height: 100vh;
+  padding: 0 24px 48px;
+  color: var(--ink);
+  background: #f4f7f5;
+}
+.header, .hero, .nextService, .history, .footer { width: min(760px, 100%); margin-inline: auto; }
+.header { height: 76px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 800; letter-spacing: .04em; }
+.brandIcon { width: 34px; height: 34px; display: grid; place-items: center; color: white; background: #117d70; }
+.brand small { display: block; margin-top: 3px; color: var(--muted); font-size: 9px; font-weight: 700; letter-spacing: .13em; }
+.publicLabel { color: #107c6d; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.hero { padding: 48px 0 30px; }
+.eyebrow, .sectionLabel { color: #668078; font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+.vehicleTitle { display: flex; align-items: center; gap: 18px; margin-top: 22px; }
+.carIcon { width: 60px; height: 60px; display: grid; place-items: center; color: #117d70; background: #e2f1ed; }
+.vehicleTitle > div > span { font-size: 13px; font-weight: 800; letter-spacing: .09em; }
+.vehicleTitle h1 { margin: 4px 0 1px; font-family: Georgia, 'Times New Roman', serif; font-size: 32px; font-weight: 500; }
+.vehicleTitle p { color: var(--muted); font-size: 13px; }
+.nextService { padding: 22px 26px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); background: white; }
+.nextService > div:first-child { display: grid; gap: 8px; }
+.sectionLabel { display: flex; align-items: center; gap: 7px; }
+.nextService strong { font-size: 29px; line-height: 1; }
+.nextService strong small { color: var(--muted); font-size: 13px; font-weight: 600; }
+.nextService p { display: flex; align-items: center; gap: 6px; color: #b97527; font-size: 12px; }
+.qr { padding: 7px; border: 1px solid var(--line); background: white; }
+.history { margin-top: 36px; }
+.historyHeading { display: flex; align-items: end; justify-content: space-between; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+.historyHeading h2 { margin-top: 7px; font-family: Georgia, 'Times New Roman', serif; font-size: 25px; font-weight: 500; }
+.historyHeading > span { color: var(--muted); font-size: 12px; }
+.entry { display: grid; grid-template-columns: 22px 1fr; gap: 14px; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.timeline { position: relative; display: flex; justify-content: center; }
+.timeline::after { position: absolute; top: 10px; bottom: -22px; width: 1px; content: ''; background: #d8e4df; }
+.entry:last-child .timeline::after { display: none; }
+.timeline i { z-index: 1; width: 9px; height: 9px; margin-top: 4px; border: 2px solid white; border-radius: 50%; background: #159180; box-shadow: 0 0 0 1px #159180; }
+.entryTop { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.entryTop h3 { font-size: 14px; font-weight: 700; }
+.entryTop time { color: var(--muted); font-size: 11px; white-space: nowrap; }
+.entryContent p { margin: 8px 0; color: #55686d; font-size: 13px; line-height: 1.6; }
+.entryContent > span { color: #839196; font-size: 11px; }
+.entryContent > span i, .footer span { display: inline-block; width: 3px; height: 3px; margin: 0 8px 2px; border-radius: 50%; background: #9aadaa; }
+.empty, .missing { color: var(--muted); font-size: 13px; }
+.empty { padding: 24px 0; }
+.footer { display: flex; justify-content: space-between; margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--line); color: #84938f; font-size: 10px; font-weight: 800; letter-spacing: .1em; }
+.footer span { width: auto; height: auto; margin: 0; color: #9ba9a5; font-size: 11px; font-weight: 500; letter-spacing: 0; background: transparent; }
+.missing { min-height: 75vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 14px; text-align: center; }
+.missing h1 { color: var(--ink); font-family: Georgia, 'Times New Roman', serif; font-size: 28px; font-weight: 500; }
+.missing p { max-width: 340px; line-height: 1.6; }
+.loading { display: block; padding-top: 25vh; text-align: center; color: var(--muted); }
+@media (max-width: 560px) { .page { padding-inline: 18px; } .hero { padding-top: 36px; } .vehicleTitle h1 { font-size: 27px; } .nextService { padding: 18px; } .qr svg { width: 72px; height: 72px; } .historyHeading h2 { font-size: 22px; } .entryTop { align-items: start; flex-direction: column; gap: 5px; } .footer { gap: 10px; flex-direction: column; } }
+
+/* XEN public vehicle record */
+.page { --ink:#071426; --muted:#6d7f94; --line:#dbe5f0; padding-bottom:64px; color:#071426; background:radial-gradient(circle at 92% 2%,#dcefff 0,transparent 25%),#f5f8fc; font-family:"Trebuchet MS","Arial Rounded MT Bold",system-ui,sans-serif; }.header { height:88px; }.brand { gap:0; }.brand::before { width:142px; height:52px; content:""; background:url('/logo.png') center / contain no-repeat; }.brandIcon,.brand > span:last-child { display:none; }.publicLabel { padding:7px 10px; border:1px solid #bfdbf3; color:#0873bc; background:#eef8ff; border-radius:99px; }.hero { position:relative; overflow:hidden; margin-top:28px; padding:38px 42px; border-radius:22px; color:#fff; background:linear-gradient(125deg,#071d35,#0b4e82); box-shadow:0 22px 48px #0a4b7b28; }.hero::after { position:absolute; right:-50px; bottom:-100px; width:290px; height:290px; border:38px solid #74c2ef20; border-radius:50%; content:""; }.eyebrow,.sectionLabel { color:#4e9fd3; }.hero .eyebrow { color:#8acdf3; }.vehicleTitle { position:relative; z-index:1; }.carIcon { width:66px; height:66px; border:1px solid #7bc5f144; color:#fff; background:#ffffff1b; border-radius:18px; }.vehicleTitle > div > span { color:#b8dff5; }.vehicleTitle h1 { font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; font-weight:800; letter-spacing:-.045em; }.vehicleTitle p { color:#d0e7f6; }.nextService { position:relative; z-index:2; margin-top:-18px; width:min(700px,calc(100% - 28px)); padding:24px 28px; border:1px solid #d6e5f2; border-radius:18px; box-shadow:0 16px 38px #102d4d17; }.nextService strong { color:#0b416c; font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; font-size:33px; }.nextService p { color:#0873bc; }.qr { padding:9px; border:1px solid #cee1f0; border-radius:12px; box-shadow:0 6px 15px #0d5d9b12; }.history { margin-top:48px; padding:0 8px; }.historyHeading { padding-bottom:18px; }.historyHeading h2 { color:#0b3559; font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; font-weight:800; }.historyHeading > span { padding:5px 9px; color:#3977a7; background:#e6f3fc; border-radius:99px; }.entry { padding:22px 4px; }.timeline::after { background:#d2e4f1; }.timeline i { background:#0a70b8; box-shadow:0 0 0 4px #e4f3fd; }.entryTop h3 { color:#143e63; }.entryContent p { color:#587086; }.entryContent > span { color:#7890a4; }.footer { margin-top:44px; color:#42769d; }.footer span { color:#7994a9; }
+@media (max-width:560px) { .page { padding:0 14px 42px; }.header { height:76px; }.brand::before { width:112px; height:42px; }.publicLabel { padding:6px 8px; font-size:8px; }.hero { margin-top:16px; padding:28px 22px; border-radius:18px; }.hero::after { right:-110px; bottom:-125px; }.vehicleTitle { gap:13px; margin-top:17px; }.carIcon { width:52px; height:52px; border-radius:14px; }.nextService { width:calc(100% - 16px); margin-top:-12px; padding:18px; border-radius:15px; }.nextService strong { font-size:27px; }.history { margin-top:38px; padding:0; }.entry { grid-template-columns:18px 1fr; gap:9px; }.footer { margin-top:30px; } }
