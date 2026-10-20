@@ -15,8 +15,14 @@ export async function ensureInitialAdmin() {
   const password = process.env.GARAGE_ADMIN_PASSWORD;
   if (!email || !password) return;
   const database = await getDatabase();
-  if (await database.collection("mechanics").countDocuments({}, { limit: 1 })) return;
-  await database.collection("mechanics").insertOne({ name: "Administrateur", email, passwordHash: await hashPassword(password), role: "admin", specialty: "Administration", active: true, createdAt: new Date() });
+  await database.collection("mechanics").updateOne(
+    { email },
+    {
+      $set: { passwordHash: await hashPassword(password), role: "admin", specialty: "Administration", active: true, updatedAt: new Date() },
+      $setOnInsert: { name: "Administrateur", createdAt: new Date() },
+    },
+    { upsert: true },
+  );
 }
 
 export async function hashPassword(password: string) {
