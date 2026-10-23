@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { IScannerControls } from "@zxing/browser";
 import { QRCodeSVG } from "qrcode.react";
 import { useRouter } from "next/navigation";
 import { Activity, ArrowRight, Bell, BriefcaseBusiness, CalendarDays, CarFront, Check, ChevronDown, CircleHelp, Clock3, Download, FilePlus2, Gauge, KeyRound, LogOut, Pencil, Plus, QrCode, Search, ShieldCheck, Trash2, UsersRound, Wrench, X } from "lucide-react";
@@ -28,7 +29,11 @@ export default function Home() {
   const [selected, setSelected] = useState<Vehicle | null>(null);
   const [notice, setNotice] = useState("");
   const [scanValue, setScanValue] = useState("");
+  const [scannerError, setScannerError] = useState("");
   const [currentDay, setCurrentDay] = useState("");
+  const scannerVideo = useRef<HTMLVideoElement>(null);
+  const scannerControls = useRef<IScannerControls | null>(null);
+  const scanHandled = useRef(false);
   const [dateLabel, setDateLabel] = useState("Aujourd’hui");
 
   useEffect(() => {
@@ -64,6 +69,57 @@ export default function Home() {
     return () => controller.abort();
   }, []);
   useEffect(() => { if (!notice) return; const timer = window.setTimeout(() => setNotice(""), 3200); return () => window.clearTimeout(timer); }, [notice]);
+  useEffect(() => {
+    if (modal !== "scan") return;
+    let cancelled = false;
+    scanHandled.current = false;
+    const openScannedVehicle = (value: string) => {
+      const normalized = value.replace(/\s/g, "").toLowerCase();
+      const car = vehicles.find((item) => item.plate.replace(/\s/g, "").toLowerCase() === normalized || item.id.toLowerCase() === normalized);
+      if (car) { setSelected(car); setModal("qr"); setSearch(""); setScanValue(""); } else setNotice("Aucun véhicule trouvé. Vérifiez l’immatriculation ou ajoutez une nouvelle arrivée.");
+    };
+
+    const startScanner = async () => {
+      if (!navigator.mediaDevices?.getUserMedia || !scannerVideo.current) {
+        setScannerError("La caméra n’est pas disponible sur cet appareil.");
+        return;
+      }
+      try {
+        const { BrowserQRCodeReader } = await import("@zxing/browser");
+        if (cancelled || !scannerVideo.current) return;
+        setScannerError("");
+        const reader = new BrowserQRCodeReader();
+        const controls = await reader.decodeFromConstraints(
+          { audio: false, video: { facingMode: { ideal: "environment" }, width: { ideal: 1280 }, height: { ideal: 720 } } },
+          scannerVideo.current,
+          (result) => {
+            if (!result || scanHandled.current) return;
+            scanHandled.current = true;
+            scannerControls.current?.stop();
+            const scannedValue = result.getText();
+            try {
+              const url = new URL(scannedValue);
+              const match = url.pathname.match(/^\/vehicle\/([^/]+)/);
+              openScannedVehicle(match ? decodeURIComponent(match[1]) : scannedValue);
+            } catch {
+              openScannedVehicle(scannedValue);
+            }
+          },
+        );
+        if (cancelled) controls.stop();
+        else scannerControls.current = controls;
+      } catch {
+        if (!cancelled) setScannerError("Autorisez la caméra pour scanner le code QR, ou utilisez la recherche manuelle.");
+      }
+    };
+
+    void startScanner();
+    return () => {
+      cancelled = true;
+      scannerControls.current?.stop();
+      scannerControls.current = null;
+    };
+  }, [modal, vehicles]);
 
   const arrivals = vehicles.filter((car) => car.arrived === currentDay);
   const jobsToday = vehicles.flatMap((car) => car.history).filter((job) => job.date === currentDay);
@@ -158,7 +214,7 @@ export default function Home() {
       {modal === "edit" && selected && <form className={styles.form} action={updateVehicle}><div className={styles.formGrid}><label>Immatriculation<input name="plate" required defaultValue={selected.plate} /></label><label>Nom du proprietaire<input name="owner" required defaultValue={selected.owner} /></label><label>Marque<input name="make" required defaultValue={selected.make} /></label><label>Modele<input name="model" required defaultValue={selected.model} /></label><label>Annee<input name="year" type="number" min="1950" max="2035" required defaultValue={selected.year} /></label><label>Telephone<input name="phone" defaultValue={selected.phone} /></label><label>Kilometrage actuel (km)<input name="mileage" type="number" min="0" required defaultValue={selected.mileage} /></label><label>Prochaine vidange (km)<input name="nextOil" type="number" min="0" required defaultValue={selected.nextOil} /></label><label>Statut<select name="status" defaultValue={selected.status}><option value="Waiting">En attente</option><option value="In service">En reparation</option><option value="Ready">Pret</option></select></label></div><div className={styles.dialogActions}><button type="button" className={styles.secondaryButton} onClick={() => setModal("qr")}>Annuler</button><button className={styles.primaryButton}><Check size={16} /> Enregistrer les modifications</button></div></form>}
       {modal === "service" && <form className={styles.form} action={addJob}><label>Vehicle<select required value={selected?.id ?? ""} onChange={(event) => setSelected(vehicles.find((car) => car.id === event.target.value) ?? null)}><option value="" disabled>Select registration</option>{vehicles.map((car) => <option key={car.id} value={car.id}>{car.plate} · {car.make} {car.model}</option>)}</select></label><label>Work completed<select name="kind" required defaultValue="Oil & filter change"><option>Oil & filter change</option><option>Brake inspection</option><option>Engine repair</option><option>Electrical repair</option><option>Tyre service</option><option>Air conditioning check</option><option>Other maintenance</option></select></label><div className={styles.formGrid}><label>Current mileage (km)<input name="mileage" type="number" min="0" required defaultValue={selected?.mileage ?? ""} /></label><label>Mechanic<select name="mechanic">{mechanics.map((person) => <option key={person.email}>{person.name}</option>)}</select></label></div><label>Notes<textarea name="notes" rows={3} placeholder="Parts changed, symptoms found, recommendations..." /></label><div className={styles.dialogActions}><button type="button" className={styles.secondaryButton} onClick={() => setModal(null)}>Cancel</button><button className={styles.primaryButton} type="submit" disabled={!selected}><Check size={16} /> Save service</button></div></form>}
       {modal === "mechanic" && role === "Admin" && <form className={styles.form} action={addMechanic}><div className={styles.formNote}><KeyRound size={16} /> Mechanics can log service and register arrivals, but cannot create accounts.</div><label>Full name<input name="name" required placeholder="Technician name" /></label><label>Email address<input name="email" type="email" required placeholder="name@garage.tn" /></label><label>Specialty<input name="specialty" required placeholder="Engine & servicing" /></label><div className={styles.dialogActions}><button type="button" className={styles.secondaryButton} onClick={() => setModal(null)}>Cancel</button><button className={styles.primaryButton}><UsersRound size={16} /> Create account</button></div></form>}
-      {modal === "scan" && <div className={styles.scanContent}><div className={styles.scanSymbol}><QrCode size={31} /></div><p>Enter the registration shown on the vehicle QR label to open its service record.</p><form className={styles.scanForm} onSubmit={(event) => { event.preventDefault(); findVehicle(scanValue); }}><input autoFocus value={scanValue} onChange={(event) => setScanValue(event.target.value)} placeholder="205 TN 1234" aria-label="Vehicle registration" /><button className={styles.primaryButton}><Search size={16} /> Find</button></form><span className={styles.scanHint}>QR labels open the matching digital service record.</span></div>}
+      {modal === "scan" && <div className={styles.scanContent}><div className={styles.scanCamera}><video ref={scannerVideo} className={styles.scanVideo} autoPlay muted playsInline /><span className={styles.scanFrame} aria-hidden="true" /></div><p>Cadrez le code QR du véhicule : la fiche s’ouvrira automatiquement après la détection.</p>{scannerError && <span className={styles.scanError}>{scannerError}</span>}<form className={styles.scanForm} onSubmit={(event) => { event.preventDefault(); findVehicle(scanValue); }}><input autoFocus value={scanValue} onChange={(event) => setScanValue(event.target.value)} placeholder="205 TN 1234" aria-label="Immatriculation du véhicule" /><button className={styles.primaryButton}><Search size={16} /> Rechercher</button></form><span className={styles.scanHint}>La recherche manuelle reste disponible si la caméra est refusée.</span></div>}
       {modal === "qr" && selected && <div className={styles.vehicleRecord}><div className={styles.recordTop}><div className={styles.recordCar}><span className={styles.recordCarIcon}><CarFront size={24} /></span><div><strong>{selected.make} {selected.model}</strong><span>{selected.year} · {selected.owner}</span><small>{selected.phone}</small></div></div><span className={`${styles.status} ${selected.status === "Ready" ? styles.statusReady : selected.status === "Waiting" ? styles.statusWaiting : styles.statusService}`}><i />{selected.status}</span></div><div className={styles.qrAndOil}><div className={styles.qrPrint}><QRCodeSVG value={`${typeof window !== "undefined" ? window.location.origin : ""}/vehicle/${selected.id}`} size={148} level="M" includeMargin /></div><div className={styles.nextOil}><span>NEXT OIL CHANGE</span><strong>{fmt(selected.nextOil)} <small>km</small></strong><div className={styles.progressTrack}><span style={{ width: `${Math.min(100, Math.max(0, selected.mileage / selected.nextOil * 100))}%` }} /></div><small>{fmt(Math.max(0, selected.nextOil - selected.mileage))} km remaining</small><button className={styles.secondaryButton} onClick={() => setModal("service")}><Plus size={14} /> Log a service</button></div></div><div className={styles.historyHead}><h3>Service history <span>{selected.history.length}</span></h3><span>Most recent first</span></div><div className={styles.historyList}>{selected.history.length ? selected.history.map((job) => <article className={styles.historyEntry} key={job.id}><span className={styles.historyLine}><i /></span><div><div className={styles.historyMeta}><b>{job.kind}</b><time>{job.date}</time></div><p>{job.notes || "Service completed."}</p><span>{job.mechanic} <i /> {fmt(job.mileage)} km</span></div></article>) : <div className={styles.historyEmpty}>No maintenance records yet.</div>}</div><div className={styles.dialogActions}><button className={styles.secondaryButton} onClick={() => window.print()}><Download size={15} /> Imprimer le QR</button><button className={styles.secondaryButton} onClick={() => setModal("edit")}><Pencil size={15} /> Modifier le vehicule</button><button className={styles.dangerButton} onClick={() => void deleteVehicle()}><Trash2 size={15} /> Supprimer</button><button className={styles.primaryButton} onClick={() => setModal("service")}><Plus size={15} /> Ajouter une intervention</button></div></div>}
     </section></div>}
     {notice && <div className={styles.toast}><Check size={16} /> {notice}</div>}
