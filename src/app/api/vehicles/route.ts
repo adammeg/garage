@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   try { await requireSession(); } catch { return NextResponse.json({ error: "Non authentifié." }, { status: 401 }); }
   const body = await request.json();
   const plate = normalizePlate(String(body.plate || ""));
-  if (!plate || !body.make || !body.model || !body.owner || !Number.isFinite(Number(body.mileage)) || !Number.isFinite(Number(body.nextOil))) {
+  if (!plate || !body.make || !body.model || !Number.isFinite(Number(body.mileage)) || !Number.isFinite(Number(body.nextOil))) {
     return NextResponse.json({ error: "Veuillez renseigner tous les champs obligatoires du véhicule." }, { status: 400 });
   }
   const database = await getDatabase();
