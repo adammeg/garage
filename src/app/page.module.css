@@ -61,3 +61,45 @@
 
 .mobileNav { display:none; }
 @media (max-width:740px) { .content { padding-bottom:calc(92px + env(safe-area-inset-bottom)); }.mobileNav { position:fixed; z-index:15; right:0; bottom:0; left:0; display:grid; grid-auto-columns:1fr; grid-auto-flow:column; min-height:66px; padding:7px max(12px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left)); border-top:1px solid #d7e3f0; background:rgba(255,255,255,.96); box-shadow:0 -8px 24px #0c315216; backdrop-filter:blur(14px); }.mobileNav button { display:grid; place-items:center; gap:3px; min-width:0; min-height:44px; padding:4px; border:0; color:#71839a; background:transparent; font:700 9px inherit; cursor:pointer; }.mobileNav button span { overflow:hidden; max-width:100%; text-overflow:ellipsis; white-space:nowrap; }.mobileNavActive { color:#0873bc !important; }.mobileNavActive svg { filter:drop-shadow(0 3px 5px #0873bc55); } }
+
+.statusControl { display: grid; gap: 5px; color: #476178; font-size: 12px; font-weight: 700; }
+.statusControl select { min-height: 40px; padding: 6px 10px; border: 1px solid #bacddd; border-radius: 7px; background: #fff; color: #173d65; font: inherit; }
+.mobileLogout { display: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 0 17px 14px; font-size: 12px; color: #476178; }
+.dialogActions { flex-wrap: wrap; }
+.dialogHead h2, .recordCar, .mechanicCard small, .historyEntry { overflow-wrap: anywhere; }
+.searchResults { top: calc(100% - 10px); z-index: 9; }
+.tableHeading, .headingActions, .recordTop { flex-wrap: wrap; }
+
+@media screen and (max-width: 1020px) {
+  .tableWrap table, .tableWrap tbody { display: block; min-width: 0; white-space: normal; }
+  .tableWrap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .tableWrap tr { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; padding: 16px; border-top: 1px solid var(--line); }
+  .tableWrap tbody tr:first-child { border-top: 0; }
+  .tableWrap td { display: block; height: auto; border: 0; padding: 0; font-size: 13px; overflow-wrap: anywhere; }
+  .tableWrap td:first-child { grid-column: 1 / -1; padding-right: 44px; }
+  .tableWrap td[data-label]::before { display: block; content: attr(data-label); margin-bottom: 3px; color: #536c82; font-size: 11px; }
+  .tableWrap td small, .carCell b { font-size: 12px; }
+  .clickRow td:last-child { position: absolute; top: 9px; right: 10px; }
+  .rowQr { width: 44px; height: 44px; }
+}
+@media screen and (max-width: 740px) {
+  .mobileLogout { display: inline-grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 8px; color: #164b79; background: #e7f2fb; }
+  .roleSelect { font-size: 12px; }
+  .overlay { grid-template-columns: minmax(0, 1fr); }
+  .dialog, .qrDialog { min-width: 0; width: 100%; max-height: 92dvh; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+  .dialogActions { position: static; margin-inline: 0; padding-inline: 0; }
+  .dialogActions button { flex: 1 1 130px; min-height: 44px; white-space: normal; }
+  .form input, .form select, .form textarea, .scanForm input, .statusControl select, .searchBox input { min-height: 44px; font-family: inherit; font-size: 16px; }
+  .form .checkLabel input { min-height: 20px; width: 20px; height: 20px; }
+  .dialogHead .iconButton { min-width: 44px; height: 44px; }
+  .mobileNav button span { white-space: normal; font-size: 11px; line-height: 1.1; }
+  .toast { bottom: calc(76px + env(safe-area-inset-bottom)); pointer-events: none; }
+  .metricFoot, .quickTitle small, .tableHeading p { font-size: 11px; }
+}
+@media screen and (max-width: 400px) {
+  .headingActions { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .qrAndOil { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .nextOil { text-align: center; }
+  .searchResults small { overflow-wrap: anywhere; }
+}

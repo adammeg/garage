@@ -1,0 +1,4 @@
+.dot { display: inline-block; width: 10px; height: 10px; flex: none; margin-inline-end: 7px; border-radius: 50%; vertical-align: baseline; box-shadow: 0 0 0 1px #0002; }
+.active { background: #178348; }
+.maintenance { background: #da740c; }
+.inactive { background: #c73a37; }

@@ -1,3 +1,5 @@
+export const MAX_APPOINTMENT_REASON_LENGTH = 500;
+
 const garageClock = new Intl.DateTimeFormat("sv-SE", {
   timeZone: "Africa/Tunis",
   year: "numeric", month: "2-digit", day: "2-digit",
@@ -14,8 +16,13 @@ export function isBookingDate(value: unknown): value is string {
   return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value;
 }
 
+export function isGarageClosed(date: string) {
+  return new Date(date + "T00:00:00Z").getUTCDay() === 0;
+}
+
 export function appointmentSlots(date: string) {
   const slots: string[] = [];
+  if (isGarageClosed(date)) return slots;
   for (let hour = 9; hour < 17; hour++) {
     const prefix = date + "T" + String(hour).padStart(2, "0");
     slots.push(prefix + ":00", prefix + ":30");

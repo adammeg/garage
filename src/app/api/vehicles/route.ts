@@ -20,7 +20,7 @@ export async function POST(request: Request) {
   const database = await getDatabase();
   const existing = await database.collection("vehicles").findOne({ plateKey: plate.replace(/\s/g, "") });
   if (existing) return NextResponse.json({ error: "Un véhicule avec cette immatriculation existe déjà." }, { status: 409 });
-  const vehicle = { plate, plateKey: plate.replace(/\s/g, ""), make: String(body.make).trim(), model: String(body.model).trim(), year: Number(body.year), owner: String(body.owner).trim(), phone: String(body.phone || "").trim(), mileage: Number(body.mileage), nextOil: Number(body.nextOil), status: "Waiting", arrived: new Date().toISOString().slice(0, 10), history: [] };
+  const vehicle = { plate, plateKey: plate.replace(/\s/g, ""), make: String(body.make).trim(), model: String(body.model).trim(), year: Number(body.year), owner: String(body.owner).trim(), phone: String(body.phone || "").trim(), mileage: Number(body.mileage), nextOil: Number(body.nextOil), status: "active", arrived: new Date().toISOString().slice(0, 10), history: [] };
   const result = await database.collection("vehicles").insertOne(vehicle);
   return NextResponse.json({ vehicle: vehicleFromDocument({ ...vehicle, _id: result.insertedId }) }, { status: 201 });
 }

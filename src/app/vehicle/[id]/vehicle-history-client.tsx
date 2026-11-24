@@ -7,8 +7,9 @@ import Link from "next/link";
 import styles from "./vehicle.module.css";
 import FrenchInterface from "../../french-interface";
 
-type Service = { id: string; date: string; kind: string; mileage: number; notes: string; mechanic: string };
-type Vehicle = { id: string; plate: string; make: string; model: string; year: number; mileage: number; nextOil: number; history: Service[] };
+import VehicleStatusDot from "../../vehicle-status-dot";
+import type { VehicleRecord } from "@/lib/garage";
+type Vehicle = Pick<VehicleRecord, "id" | "plate" | "make" | "model" | "year" | "mileage" | "nextOil" | "status" | "history">;
 
 export default function VehicleHistoryClient({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -20,8 +21,8 @@ export default function VehicleHistoryClient({ params }: { params: Promise<{ id:
     fetch(`/api/vehicles/${id}`, { signal: controller.signal })
       .then(async (response) => response.ok ? response.json() : null)
       .then((data) => setVehicle(data?.vehicle ?? null))
-      .catch(() => setVehicle(null))
-      .finally(() => setLoaded(true));
+      .catch(() => { if (!controller.signal.aborted) setVehicle(null); })
+      .finally(() => { if (!controller.signal.aborted) setLoaded(true); });
     return () => controller.abort();
   }, [id]);
 
@@ -29,8 +30,8 @@ export default function VehicleHistoryClient({ params }: { params: Promise<{ id:
   if (!vehicle) return <main className={styles.page}><section className={styles.missing}><span className={styles.brand}><Wrench size={18} /> ATELIER</span><CircleAlert size={27} /><h1>Fiche indisponible</h1><p>Ce code QR ne correspond à aucun véhicule enregistré.</p></section></main>;
 
   return <FrenchInterface><main className={styles.page}>
-    <header className={styles.header}><Link href="/" className={styles.brand}><span className={styles.brandIcon}><Wrench size={17} /></span><span>ATELIER<small>GARAGE SERVICE RECORD</small></span></Link><span className={styles.publicLabel}>CUSTOMER COPY</span></header>
-    <section className={styles.hero}><div className={styles.eyebrow}>DIGITAL MAINTENANCE RECORD</div><div className={styles.vehicleTitle}><span className={styles.carIcon}><CarFront size={26} /></span><div><span>{vehicle.plate}</span><h1>{vehicle.make} {vehicle.model}</h1><p>{vehicle.year} model · Tunis</p></div></div></section>
+    <header className={styles.header}><span className={styles.brand} role="img" aria-label="Atelier"><span className={styles.brandIcon}><Wrench size={17} /></span><span>ATELIER<small>GARAGE SERVICE RECORD</small></span></span><span className={styles.publicLabel}>CUSTOMER COPY</span></header>
+    <section className={styles.hero}><div className={styles.eyebrow}>DIGITAL MAINTENANCE RECORD</div><div className={styles.vehicleTitle}><span className={styles.carIcon}><CarFront size={26} /></span><div><span><VehicleStatusDot status={vehicle.status} />{vehicle.plate}</span><h1>{vehicle.make} {vehicle.model}</h1><p>{vehicle.year} model · Tunis</p></div></div></section>
     <section className={styles.nextService}><div><span className={styles.sectionLabel}><Clock3 size={14} /> NEXT OIL CHANGE</span><strong>{new Intl.NumberFormat("en-US").format(vehicle.nextOil)} <small>km</small></strong><p><CircleAlert size={14} /> {new Intl.NumberFormat("en-US").format(Math.max(0, vehicle.nextOil - vehicle.mileage))} km remaining</p></div><div className={styles.qr}><QRCodeSVG value={window.location.href} size={88} includeMargin /></div></section>
     <div className={styles.bookingAction}>
       <Link className={styles.confirm} href={`/vehicle/${vehicle.id}/appointments`}>

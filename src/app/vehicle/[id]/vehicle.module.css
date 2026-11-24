@@ -79,6 +79,9 @@
 .confirm:disabled { color: #526a80; background: #e5ecf2; cursor: default; }
 .upcoming { margin-bottom: 18px; padding: 14px 16px; border-radius: 8px; background: #eef7fd; }
 .upcoming ul { margin: 6px 0 0 18px; font-size: 14px; line-height: 1.6; }
+.savedReason { display: block; color: #526a80; white-space: pre-wrap; overflow-wrap: anywhere; }
+.reasonField { display: grid; gap: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 700; }
+.reasonField textarea { width: 100%; padding: 10px 12px; border: 1px solid #b7cbda; border-radius: 8px; color: var(--ink); font: inherit; font-weight: 400; resize: vertical; }
 .bookingMessage:not(:empty) { margin: 12px 0; color: #0b416c; font-weight: 700; }
 .retry { border: 0; color: #0b568b; background: transparent; font: inherit; text-decoration: underline; cursor: pointer; }
 @media (max-width: 560px) { .page { padding-inline: 18px; } .hero { padding-top: 36px; } .vehicleTitle h1 { font-size: 27px; } .nextService { padding: 18px; } .qr svg { width: 72px; height: 72px; } .historyHeading h2 { font-size: 22px; } .entryTop { align-items: start; flex-direction: column; gap: 5px; } .footer { gap: 10px; flex-direction: column; } }
@@ -86,3 +89,16 @@
 /* XEN public vehicle record */
 .page { --ink:#071426; --muted:#6d7f94; --line:#dbe5f0; padding-bottom:64px; color:#071426; background:radial-gradient(circle at 92% 2%,#dcefff 0,transparent 25%),#f5f8fc; font-family:"Trebuchet MS","Arial Rounded MT Bold",system-ui,sans-serif; }.header { height:88px; }.brand { gap:0; }.brand::before { width:142px; height:52px; content:""; background:url('/logo.png') center / contain no-repeat; }.brandIcon,.brand > span:last-child { display:none; }.publicLabel { padding:7px 10px; border:1px solid #bfdbf3; color:#0873bc; background:#eef8ff; border-radius:99px; }.hero { position:relative; overflow:hidden; margin-top:28px; padding:38px 42px; border-radius:22px; color:#fff; background:linear-gradient(125deg,#071d35,#0b4e82); box-shadow:0 22px 48px #0a4b7b28; }.hero::after { position:absolute; right:-50px; bottom:-100px; width:290px; height:290px; border:38px solid #74c2ef20; border-radius:50%; content:""; }.eyebrow,.sectionLabel { color:#4e9fd3; }.hero .eyebrow { color:#8acdf3; }.vehicleTitle { position:relative; z-index:1; }.carIcon { width:66px; height:66px; border:1px solid #7bc5f144; color:#fff; background:#ffffff1b; border-radius:18px; }.vehicleTitle > div > span { color:#b8dff5; }.vehicleTitle h1 { font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; font-weight:800; letter-spacing:-.045em; }.vehicleTitle p { color:#d0e7f6; }.nextService { position:relative; z-index:2; margin-top:-18px; width:min(700px,calc(100% - 28px)); padding:24px 28px; border:1px solid #d6e5f2; border-radius:18px; box-shadow:0 16px 38px #102d4d17; }.nextService strong { color:#0b416c; font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; font-size:33px; }.nextService p { color:#0873bc; }.qr { padding:9px; border:1px solid #cee1f0; border-radius:12px; box-shadow:0 6px 15px #0d5d9b12; }.history { margin-top:48px; padding:0 8px; }.historyHeading { padding-bottom:18px; }.historyHeading h2 { color:#0b3559; font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; font-weight:800; }.historyHeading > span { padding:5px 9px; color:#3977a7; background:#e6f3fc; border-radius:99px; }.entry { padding:22px 4px; }.timeline::after { background:#d2e4f1; }.timeline i { background:#0a70b8; box-shadow:0 0 0 4px #e4f3fd; }.entryTop h3 { color:#143e63; }.entryContent p { color:#587086; }.entryContent > span { color:#7890a4; }.footer { margin-top:44px; color:#42769d; }.footer span { color:#7994a9; }
 @media (max-width:560px) { .page { padding:0 14px 42px; }.header { height:76px; }.brand::before { width:112px; height:42px; }.publicLabel { padding:6px 8px; font-size:8px; }.hero { margin-top:16px; padding:28px 22px; border-radius:18px; }.hero::after { right:-110px; bottom:-125px; }.vehicleTitle { gap:13px; margin-top:17px; }.carIcon { width:52px; height:52px; border-radius:14px; }.nextService { width:calc(100% - 16px); margin-top:-12px; padding:18px; border-radius:15px; }.nextService strong { font-size:27px; }.history { margin-top:38px; padding:0; }.entry { grid-template-columns:18px 1fr; gap:9px; }.footer { margin-top:30px; } }
+
+.vehicleTitle > div { min-width: 0; overflow-wrap: anywhere; }
+.entryContent { min-width: 0; overflow-wrap: anywhere; }
+.booking h1 svg, .carIcon { flex: none; }
+@media screen and (max-width: 560px) {
+  .bookingDate input, .reasonField textarea { font-size: 16px; }
+  .confirm { min-height: 44px; }
+  .bookingAction { width: calc(100% - 16px); }
+  .bookingAction a { display: flex; justify-content: center; }
+  .nextService { gap: 8px; }
+  .nextService strong { overflow-wrap: anywhere; }
+  .backLink { text-align: right; }
+}

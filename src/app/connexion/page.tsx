@@ -2,11 +2,9 @@
 
 import { FormEvent, useState } from "react";
 import { ArrowRight, KeyRound, Mail, ShieldCheck, Wrench } from "lucide-react";
-import { useRouter } from "next/navigation";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -14,10 +12,16 @@ export default function LoginPage() {
     event.preventDefault();
     setPending(true); setError("");
     const values = Object.fromEntries(new FormData(event.currentTarget));
-    const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(values) });
-    const data = await response.json();
-    if (!response.ok) { setError(data.error || "Impossible de vous connecter."); setPending(false); return; }
-    router.replace("/"); router.refresh();
+    try {
+      const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(values) });
+      const data = await response.json();
+      if (!response.ok) { setError(data.error || "Impossible de vous connecter."); return; }
+      window.location.replace("/");
+    } catch {
+      setError("Connexion impossible. Vérifiez votre connexion et réessayez.");
+    } finally {
+      setPending(false);
+    }
   }
 
   return <main className={styles.page}>
