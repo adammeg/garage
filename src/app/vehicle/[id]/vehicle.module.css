@@ -59,9 +59,12 @@
   border-radius: 18px;
   background: white;
 }
-.booking h2 { display: flex; align-items: center; gap: 10px; color: #0b3559; font-size: 22px; }
+.bookingAction { width: min(700px, calc(100% - 28px)); margin: 20px auto 0; }
+.bookingAction a, .backLink { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
+.backLink { color: #0b568b; font-size: 14px; font-weight: 700; }
+.booking h1 { display: flex; align-items: center; gap: 10px; color: #0b3559; font-size: 22px; }
 .booking p { margin-top: 8px; color: #526a80; font-size: 14px; line-height: 1.5; }
-.bookingDate, .slotPicker legend, .upcoming h3 { font-size: 14px; font-weight: 700; }
+.bookingDate, .slotPicker legend, .upcoming h2 { font-size: 14px; font-weight: 700; }
 .bookingDate { display: grid; width: fit-content; gap: 8px; margin: 20px 0; }
 .bookingDate input, .slots span { border: 1px solid #b7cbda; border-radius: 8px; color: #123e61; background: white; }
 .bookingDate input { min-height: 44px; padding: 8px 12px; font: inherit; }

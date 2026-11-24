@@ -1,6 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { CalendarDays } from "lucide-react";
-import { garageLocalTime, isBookingDate } from "@/lib/appointment-times";
+import { isBookingDate } from "@/lib/appointment-times";
 import styles from "./vehicle.module.css";
 
 type Schedule = { available: string[]; upcoming: string[] };
@@ -13,8 +15,9 @@ function describeSlot(slot: string) {
   return frenchDate.format(new Date(slot.slice(0, 10) + "T00:00:00Z")) + " à " + slot.slice(11);
 }
 
-export default function AppointmentBooking({ vehicleId }: { vehicleId: string }) {
-  const today = garageLocalTime().slice(0, 10);
+type BookingProps = { vehicleId: string; plate: string; today: string };
+
+export default function AppointmentBooking({ vehicleId, plate, today }: BookingProps) {
   const [date, setDate] = useState(today);
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [selected, setSelected] = useState("");
@@ -76,7 +79,8 @@ export default function AppointmentBooking({ vehicleId }: { vehicleId: string })
 
   return (
     <section className={styles.booking} aria-labelledby="booking-title">
-      <h2 id="booking-title"><CalendarDays size={22} aria-hidden="true" /> Prendre rendez-vous</h2>
+      <h1 id="booking-title"><CalendarDays size={22} aria-hidden="true" /> Prendre rendez-vous</h1>
+      <p>Immatriculation · <strong>{plate}</strong></p>
       <p>Du lundi au dimanche, de 9 h à 17 h · 30 minutes · Heure de Tunis</p>
       <label className={styles.bookingDate}>
         Date du rendez-vous
@@ -92,7 +96,7 @@ export default function AppointmentBooking({ vehicleId }: { vehicleId: string })
         : !schedule ? <p role="status">Chargement des créneaux…</p>
         : <>
           {schedule.upcoming.length > 0 && <div className={styles.upcoming}>
-            <h3>Rendez-vous de ce véhicule</h3>
+            <h2>Rendez-vous de ce véhicule</h2>
             <ul>{schedule.upcoming.map(slot => <li key={slot}>{describeSlot(slot)}</li>)}</ul>
           </div>}
           {schedule.available.length ? <form onSubmit={event => { event.preventDefault(); void book(); }}>
