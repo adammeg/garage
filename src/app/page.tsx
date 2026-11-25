@@ -11,6 +11,7 @@ import FrenchInterface from "./french-interface";
 import type { VehicleRecord as Vehicle } from "@/lib/garage";
 import { statusLabels, type VehicleStatus } from "@/lib/vehicle-status";
 import VehicleStatusDot from "./vehicle-status-dot";
+import DailyBookings from "./daily-bookings";
 type Mechanic = { name: string; email: string; specialty: string };
 type AuthUser = { id: string; name: string; email: string; role: "admin" | "mechanic"; specialty?: string };
 type Modal = "vehicle" | "edit" | "service" | "mechanic" | "qr" | "scan" | null;
@@ -39,12 +40,14 @@ export default function Home() {
   const [dateLabel, setDateLabel] = useState("Aujourd’hui");
 
   useEffect(() => {
-    const timer = window.setTimeout(() => {
+    function updateDay() {
       const now = new Date();
       setCurrentDay(now.toISOString().slice(0, 10));
-      setDateLabel(now.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
-    }, 0);
-    return () => window.clearTimeout(timer);
+      setDateLabel(now.toLocaleDateString("fr-FR", { dateStyle: "full", timeZone: "Africa/Tunis" }));
+    }
+    const initial = window.setTimeout(updateDay, 0);
+    const timer = window.setInterval(updateDay, 60_000);
+    return () => { window.clearTimeout(initial); window.clearInterval(timer); };
   }, []);
   useEffect(() => {
     fetch("/api/auth/me").then(async (response) => {
@@ -237,6 +240,7 @@ export default function Home() {
       <header className={styles.topbar}><div className={styles.mobileBrand}><span className={styles.brandMark}><Wrench size={18} /></span> ATELIER</div><div className={styles.breadcrumb}>Workspace <span>/</span> <b>{section}</b></div><div className={styles.topActions}><span className={styles.roleSelect}><ShieldCheck size={15} />{authUser && (isAdmin ? "Administrateur" : "Mécanicien")}</span><button className={styles.mobileLogout} title="Se déconnecter" onClick={() => void runAction(logout)}><LogOut size={18} /></button></div></header>
       <div className={styles.content}>
         <div className={styles.pageHeading}><div><div className={styles.eyebrow}><CalendarDays size={14} /> {dateLabel}</div><h1>{section === "Overview" ? "Good morning" : section}<span className={styles.headingDot}>.</span></h1><p>{section === "Overview" ? "Here's what's happening at the garage today." : section === "Vehicles" ? "Find vehicles, review their records, and print service QR codes." : section === "Work log" ? "Every job completed and every note added to a vehicle." : "Manage the technicians working in your garage."}</p></div><div className={styles.headingActions}><button className={styles.secondaryButton} onClick={() => setModal("scan")}><QrCode size={16} /> Scan vehicle</button><button className={styles.primaryButton} onClick={() => setModal("vehicle")}><Plus size={17} /> New arrival</button></div></div>
+        {authUser && section === "Overview" && <DailyBookings />}
         <section className={styles.metrics}>
           <article className={styles.metric}><div className={styles.metricTop}><span>Vehicles in garage</span><span className={`${styles.metricIcon} ${styles.metricTeal}`}><CarFront size={17} /></span></div><div className={styles.metricValue}>{vehicles.length}<small>vehicles</small></div><div className={styles.metricFoot}><i className={styles.footDotTeal} /> {vehicles.filter((car) => car.status === "maintenance").length} currently being serviced</div></article>
           <article className={styles.metric}><div className={styles.metricTop}><span>Arrivals today</span><span className={`${styles.metricIcon} ${styles.metricBlue}`}><ArrowRight size={17} /></span></div><div className={styles.metricValue}>{arrivals.length}<small>vehicles</small></div><div className={styles.metricFoot}><i className={styles.footDotBlue} /> {vehicles.length - arrivals.length} from previous days</div></article>

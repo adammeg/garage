@@ -1,0 +1,15 @@
+.panel { margin-bottom: 20px; border: 1px solid #dce5f0; border-radius: 12px; background: white; color: #173d65; }
+.heading { display: flex; align-items: baseline; justify-content: space-between; gap: 6px 16px; flex-wrap: wrap; padding: 16px 18px; }
+.heading h2 { font-size: 18px; }
+.heading p, .bookings small { color: #536c82; font-size: 12px; }
+.message { padding: 0 18px 16px; font-size: 14px; }
+.message button { padding: 7px; border: 0; text-decoration: underline; background: transparent; color: #075e9c; cursor: pointer; font: inherit; }
+.bookings { list-style: none; }
+.bookings li { display: grid; grid-template-columns: 54px minmax(120px, 1fr) minmax(0, 2fr); gap: 6px 16px; align-items: baseline; padding: 12px 18px; border-top: 1px solid #e4ebf2; font-size: 14px; overflow-wrap: anywhere; }
+.bookings time { font-weight: 700; font-variant-numeric: tabular-nums; }
+.bookings small { display: block; margin-top: 3px; }
+.bookings p { white-space: pre-wrap; line-height: 1.5; }
+@media (max-width: 640px) {
+  .bookings li { grid-template-columns: 44px minmax(0, 1fr); }
+  .bookings p { grid-column: 2; }
+}

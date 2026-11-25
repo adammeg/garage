@@ -5,9 +5,11 @@ const globalForMongo = globalThis as typeof globalThis & { mongoClient?: Promise
 async function getClient() {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error("MONGODB_URI is not configured.");
-  const clientPromise = globalForMongo.mongoClient ?? new MongoClient(uri).connect();
-  if (process.env.NODE_ENV !== "production") globalForMongo.mongoClient = clientPromise;
-  return clientPromise;
+  globalForMongo.mongoClient ??= new MongoClient(uri).connect().catch(error => {
+    delete globalForMongo.mongoClient;
+    throw error;
+  });
+  return globalForMongo.mongoClient;
 }
 
 export async function getDatabase(): Promise<Db> {

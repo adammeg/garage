@@ -19,7 +19,9 @@ export default function FrenchInterface({ children }: { children: ReactNode }) {
       const walker = document.createTreeWalker(root.current, NodeFilter.SHOW_TEXT);
       const nodes: Text[] = [];
       while (walker.nextNode()) nodes.push(walker.currentNode as Text);
-      nodes.forEach((node) => { node.nodeValue = translate(node.nodeValue || ""); });
+      nodes.forEach((node) => {
+        if (!node.parentElement?.closest('[translate="no"]')) node.nodeValue = translate(node.nodeValue || "");
+      });
       root.current.querySelectorAll<HTMLElement>("[title], [placeholder], [aria-label]").forEach((element) => {
         ["title", "placeholder", "aria-label"].forEach((attribute) => {
           const value = element.getAttribute(attribute);
