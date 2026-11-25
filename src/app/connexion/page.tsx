@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { ArrowRight, KeyRound, Mail, ShieldCheck, Wrench } from "lucide-react";
 import styles from "./login.module.css";
 
@@ -33,6 +34,7 @@ export default function LoginPage() {
         {error && <p className={styles.error} role="alert">{error}</p>}
         <button className={styles.submit} disabled={pending}>{pending ? "Veuillez patienter…" : "Se connecter"}<ArrowRight size={17} /></button>
       </form>
+      <Link href="/appointments" className={styles.bookingLink}>Prendre rendez-vous au garage</Link>
     </div><p className={styles.footer}>ATELIER GARAGE · Gestion d&apos;atelier</p></section>
   </main>;
 }

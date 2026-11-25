@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { isGarageClosed } from "@/lib/appointment-times";
 import type { DailySchedule } from "@/lib/daily-schedule";
 import VehicleStatusDot from "./vehicle-status-dot";
@@ -10,6 +11,17 @@ export default function DailyBookings() {
   const [schedule, setSchedule] = useState<DailySchedule | null>(null);
   const [failed, setFailed] = useState(false);
   const [retry, setRetry] = useState(0);
+  const [copied, setCopied] = useState(false);
+
+  async function copyBookingLink() {
+    const url = new URL("/appointments", window.location.origin).href;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+    } catch {
+      window.prompt("Copiez le lien de réservation", url);
+    }
+  }
 
   useEffect(() => {
     const controller = new AbortController();
@@ -51,6 +63,11 @@ export default function DailyBookings() {
       <h2 id="daily-bookings-title">Planning des rendez-vous du jour</h2>
       {schedule && <p>{dateLabel.format(new Date(schedule.date + "T00:00:00Z"))} · Heure de Tunis</p>}
     </header>
+    <div className={styles.share}>
+      <Link href="/appointments">Page de réservation</Link>
+      <button type="button" onClick={copyBookingLink}>Copier le lien</button>
+      <span role="status">{copied && "Lien copié"}</span>
+    </div>
     {failed && <p role="alert" className={styles.message}>
       Impossible d’actualiser le planning. <button type="button" onClick={() => setRetry(value => value + 1)}>Réessayer</button>
     </p>}
@@ -58,7 +75,7 @@ export default function DailyBookings() {
     {schedule && (schedule.bookings.length ? <ol className={styles.bookings} translate="no">
       {schedule.bookings.map(booking => <li key={booking.slot}>
         <time dateTime={booking.slot}>{booking.slot.slice(11)}</time>
-        <div><strong><VehicleStatusDot status={booking.status} />{booking.plate}</strong><small>{booking.model}</small></div>
+        <div><strong>{booking.status && <VehicleStatusDot status={booking.status} />}{booking.plate}</strong><small>{booking.model}</small></div>
         <p>{booking.reason || "Motif non renseigné"}</p>
       </li>)}
     </ol> : <p className={styles.message}>{isGarageClosed(schedule.date)

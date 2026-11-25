@@ -5,7 +5,7 @@ import { getDatabase } from "@/lib/mongodb";
 import { vehicleStatus } from "@/lib/vehicle-status";
 
 type BookedVehicle = {
-  plate: string; make: string; model: string; status?: string;
+  plate: string; make?: string; model?: string; status?: string; bookingOnly?: boolean;
   appointmentSlots: string[]; appointmentReasons?: Record<string, string>;
 };
 
@@ -21,7 +21,7 @@ export async function GET() {
   const vehicles = (await getDatabase()).collection<BookedVehicle>("vehicles");
   const bookedVehicles = await vehicles.find(
     { appointmentSlots: { $elemMatch: { $gte: start, $lte: end } } },
-    { projection: { _id: 0, plate: 1, make: 1, model: 1, status: 1, appointmentSlots: 1, appointmentReasons: 1 } },
+    { projection: { _id: 0, plate: 1, make: 1, model: 1, status: 1, bookingOnly: 1, appointmentSlots: 1, appointmentReasons: 1 } },
   ).toArray();
 
   const bookings: DailyBooking[] = [];
@@ -29,8 +29,8 @@ export async function GET() {
     for (const slot of vehicle.appointmentSlots) {
       if (slot < start || slot > end) continue;
       bookings.push({
-        slot, plate: vehicle.plate, model: [vehicle.make, vehicle.model].filter(Boolean).join(" "),
-        status: vehicleStatus(vehicle.status), reason: vehicle.appointmentReasons?.[slot] ?? null,
+        slot, plate: vehicle.plate, model: vehicle.bookingOnly ? "Véhicule à enregistrer" : [vehicle.make, vehicle.model].filter(Boolean).join(" "),
+        status: vehicle.bookingOnly ? null : vehicleStatus(vehicle.status), reason: vehicle.appointmentReasons?.[slot] ?? null,
       });
     }
   }

@@ -81,7 +81,8 @@
 .upcoming ul { margin: 6px 0 0 18px; font-size: 14px; line-height: 1.6; }
 .savedReason { display: block; color: #526a80; white-space: pre-wrap; overflow-wrap: anywhere; }
 .reasonField { display: grid; gap: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 700; }
-.reasonField textarea { width: 100%; padding: 10px 12px; border: 1px solid #b7cbda; border-radius: 8px; color: var(--ink); font: inherit; font-weight: 400; resize: vertical; }
+.reasonField textarea, .reasonField input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid #b7cbda; border-radius: 8px; color: var(--ink); font: inherit; font-weight: 400; }
+.reasonField textarea { resize: vertical; }
 .bookingMessage:not(:empty) { margin: 12px 0; color: #0b416c; font-weight: 700; }
 .retry { border: 0; color: #0b568b; background: transparent; font: inherit; text-decoration: underline; cursor: pointer; }
 @media (max-width: 560px) { .page { padding-inline: 18px; } .hero { padding-top: 36px; } .vehicleTitle h1 { font-size: 27px; } .nextService { padding: 18px; } .qr svg { width: 72px; height: 72px; } .historyHeading h2 { font-size: 22px; } .entryTop { align-items: start; flex-direction: column; gap: 5px; } .footer { gap: 10px; flex-direction: column; } }
@@ -94,7 +95,7 @@
 .entryContent { min-width: 0; overflow-wrap: anywhere; }
 .booking h1 svg, .carIcon { flex: none; }
 @media screen and (max-width: 560px) {
-  .bookingDate input, .reasonField textarea { font-size: 16px; }
+  .bookingDate input, .reasonField textarea, .reasonField input { font-size: 16px; }
   .confirm { min-height: 44px; }
   .bookingAction { width: calc(100% - 16px); }
   .bookingAction a { display: flex; justify-content: center; }

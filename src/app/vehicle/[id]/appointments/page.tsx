@@ -30,7 +30,7 @@ async function VehicleBooking({ params }: Props) {
         <ArrowLeft size={16} aria-hidden="true" /> Fiche du véhicule
       </Link>
     </header>
-    <AppointmentBooking key={id} vehicleId={id} plate={vehicle.plate} status={vehicleStatus(vehicle.status)} today={garageLocalTime().slice(0, 10)} />
+    <AppointmentBooking key={id} vehicle={{ id, plate: vehicle.plate, status: vehicleStatus(vehicle.status) }} today={garageLocalTime().slice(0, 10)} />
   </>;
 }
 

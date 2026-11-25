@@ -4,7 +4,7 @@ export type DailyBooking = {
   slot: string;
   plate: string;
   model: string;
-  status: VehicleStatus;
+  status: VehicleStatus | null;
   reason: string | null;
 };
 

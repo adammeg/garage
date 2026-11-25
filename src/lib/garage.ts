@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, type Collection } from "mongodb";
 import { vehicleStatus, type VehicleStatus } from "./vehicle-status";
 
 export type ServiceRecord = { id: string; date: string; kind: string; mileage: number; notes: string; mechanic: string };
@@ -14,7 +14,11 @@ export function vehicleFromDocument(document: Record<string, unknown>): VehicleR
 }
 
 export function idFilter(id: string) {
-  return ObjectId.isValid(id) ? { _id: new ObjectId(id) } : null;
+  return ObjectId.isValid(id) ? { _id: new ObjectId(id), bookingOnly: { $ne: true } } : null;
+}
+
+export function ensurePlateIndex(vehicles: Pick<Collection, "createIndex">) {
+  return vehicles.createIndex({ plateKey: 1 }, { unique: true, sparse: true });
 }
 
 export function normalizePlate(value: string) {

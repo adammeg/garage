@@ -9,3 +9,4 @@
   .panel { flex: 1; min-height: 0; padding: 24px 16px; justify-content: flex-start; }
   .form input { min-width: 0; font-size: 16px; }
 }
+.bookingLink { display: block; margin-top: 18px; padding: 8px 0; color: #075e9c; text-align: center; font-weight: 700; text-decoration: underline; }

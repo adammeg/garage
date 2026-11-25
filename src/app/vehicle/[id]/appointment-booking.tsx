@@ -17,18 +17,20 @@ function describeSlot(slot: string) {
   return frenchDate.format(new Date(slot.slice(0, 10) + "T00:00:00Z")) + " à " + slot.slice(11);
 }
 
-type BookingProps = { vehicleId: string; plate: string; status: VehicleStatus; today: string };
+type BookingProps = { vehicle?: { id: string; plate: string; status: VehicleStatus }; today: string };
 
-export default function AppointmentBooking({ vehicleId, plate, status, today }: BookingProps) {
+export default function AppointmentBooking({ vehicle, today }: BookingProps) {
   const [date, setDate] = useState(today);
   const [schedule, setSchedule] = useState<Schedule | null>(null);
   const [selected, setSelected] = useState("");
+  const [plate, setPlate] = useState("");
   const [reason, setReason] = useState("");
   const [revision, setRevision] = useState(0);
   const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
   const [saving, setSaving] = useState(false);
-  const endpoint = `/api/vehicles/${vehicleId}/appointments`;
+  const endpoint = vehicle ? `/api/vehicles/${vehicle.id}/appointments` : "/api/appointments";
+  const canBook = Boolean(selected && reason.trim() && (vehicle || plate.trim())) && !saving;
   const validDate = isBookingDate(date) && date >= today;
 
   useEffect(() => {
@@ -58,25 +60,26 @@ export default function AppointmentBooking({ vehicleId, plate, status, today }: 
   }
 
   async function book() {
-    if (!selected || !reason.trim() || saving) return;
+    if (!canBook) return;
     setSaving(true);
     setNotice("");
     try {
       const response = await fetch(endpoint, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slot: selected, reason: reason.trim() }),
+        body: JSON.stringify({ slot: selected, reason: reason.trim(), plate: vehicle ? undefined : plate.trim() }),
       });
       const data = await response.json();
       if (response.ok) {
         setReason("");
-        setNotice("Rendez-vous confirmé pour le " + describeSlot(data.slot) + ".");
+        setNotice(`Rendez-vous confirmé pour ${vehicle?.plate ?? plate.trim().toUpperCase()} le ${describeSlot(data.slot)}.`);
+        refresh();
       } else {
         setNotice(data.error || "Impossible de confirmer le rendez-vous.");
+        if (response.status === 409) refresh();
       }
     } catch {
-      setNotice("Confirmation indisponible. Vérifiez vos rendez-vous avant de réessayer.");
+      setNotice(vehicle ? "Confirmation indisponible. Vérifiez vos rendez-vous avant de réessayer." : "Confirmation indisponible. Réessayez avec la même immatriculation et le même créneau ou contactez le garage.");
     } finally {
-      refresh();
       setSaving(false);
     }
   }
@@ -84,7 +87,7 @@ export default function AppointmentBooking({ vehicleId, plate, status, today }: 
   return (
     <section className={styles.booking} aria-labelledby="booking-title">
       <h1 id="booking-title"><CalendarDays size={22} aria-hidden="true" /> Prendre rendez-vous</h1>
-      <p>Immatriculation · <strong><VehicleStatusDot status={status} />{plate}</strong></p>
+      {vehicle && <p>Immatriculation · <strong><VehicleStatusDot status={vehicle.status} />{vehicle.plate}</strong></p>}
       <p>Du lundi au samedi, de 9 h à 17 h · 30 minutes · Heure de Tunis</p>
       <label className={styles.bookingDate}>
         Date du rendez-vous
@@ -117,13 +120,18 @@ export default function AppointmentBooking({ vehicleId, plate, status, today }: 
                 </label>
               )}</div>
             </fieldset>
+            {!vehicle && <label className={styles.reasonField}>
+              Immatriculation du véhicule (obligatoire)
+              <input name="plate" required maxLength={80} disabled={saving} autoCapitalize="characters"
+                value={plate} onChange={event => setPlate(event.target.value)} placeholder="Ex. 123 TU 4567" />
+            </label>}
             <label className={styles.reasonField}>
               Motif du rendez-vous (obligatoire)
               <textarea required rows={3} maxLength={MAX_APPOINTMENT_REASON_LENGTH} disabled={saving}
                 value={reason} onChange={event => setReason(event.target.value)}
                 placeholder="Ex. : vidange, bruit au freinage…" />
             </label>
-            <button className={styles.confirm} disabled={!selected || !reason.trim() || saving}>
+            <button className={styles.confirm} disabled={!canBook}>
               {saving ? "Réservation en cours…" : "Confirmer le rendez-vous"}
             </button>
           </form> : <p role="status">{isGarageClosed(date)
