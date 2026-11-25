@@ -80,6 +80,9 @@
 .statusControl select { min-height: 40px; padding: 6px 10px; border: 1px solid #bacddd; border-radius: 7px; background: #fff; color: #173d65; font: inherit; }
 .mobileLogout { display: none; }
 .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 0 17px 14px; font-size: 12px; color: #476178; }
+.statusFilters { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 17px 14px; }
+.statusFilters button { display: inline-flex; align-items: center; padding: 8px 12px; border: 1px solid #c6d6e5; border-radius: 8px; background: white; color: #173d65; font: inherit; font-size: 13px; cursor: pointer; }
+.statusFilters button[aria-pressed="true"] { border-color: #0b568b; background: #0b568b; color: white; font-weight: 700; }
 .dialogActions { flex-wrap: wrap; }
 .dialogHead h2, .recordCar, .mechanicCard small, .historyEntry { overflow-wrap: anywhere; }
 .searchResults { top: calc(100% - 10px); z-index: 9; }
