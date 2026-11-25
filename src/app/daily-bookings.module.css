@@ -15,4 +15,5 @@
 }
 .share { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; padding: 0 18px 12px; font-size: 13px; }
 .share a, .share button { color: #075e9c; }
+.share a { display: inline-flex; align-items: center; min-height: 44px; padding: 8px 14px; border-radius: 6px; background: #075e9c; color: white; font-weight: 700; }
 .share button { padding: 8px 12px; border: 1px solid #b7cbda; border-radius: 6px; background: white; font: inherit; cursor: pointer; }

@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, KeyRound, Mail, ShieldCheck, Wrench } from "lucide-react";
+import { ArrowRight, CalendarDays, KeyRound, Mail, ShieldCheck, Wrench } from "lucide-react";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
@@ -26,7 +26,9 @@ export default function LoginPage() {
   }
 
   return <main className={styles.page}>
-    <section className={styles.intro}><div className={styles.brand}><span><Wrench size={22} /></span> ATELIER</div><div><p className={styles.eyebrow}>GESTION D&apos;ATELIER</p><h1>Votre garage, <em>simplement piloté.</em></h1><p className={styles.copy}>Suivez les véhicules, les interventions et les entretiens depuis un espace sécurisé.</p></div><div className={styles.points}><span><ShieldCheck size={17} /> Accès par rôle</span><span><KeyRound size={17} /> Données protégées</span></div></section>
+    <section className={styles.intro}><div className={styles.brand}><span><Wrench size={22} /></span> ATELIER</div><div><p className={styles.eyebrow}>GESTION D&apos;ATELIER</p><h1>Votre garage, <em>simplement piloté.</em></h1><p className={styles.copy}>Suivez les véhicules, les interventions et les entretiens depuis un espace sécurisé.</p></div>
+      <Link href="/appointments" className={styles.bookingLink}><CalendarDays size={18} aria-hidden="true" /> Prendre rendez-vous</Link>
+      <div className={styles.points}><span><ShieldCheck size={17} /> Accès par rôle</span><span><KeyRound size={17} /> Données protégées</span></div></section>
     <section className={styles.panel}><div className={styles.card}><div className={styles.cardHead}><span className={styles.icon}><Wrench size={21} /></span><div><p>ESPACE SÉCURISÉ</p><h2>Connexion</h2></div></div><p className={styles.description}>Connectez-vous avec les identifiants créés par l’administrateur du garage.</p>
       <form onSubmit={submit} className={styles.form}>
         <label>Adresse e-mail<div className={styles.input}><Mail size={17} /><input name="email" type="email" required autoComplete="email" placeholder="nom@garage.tn" /></div></label>
@@ -34,7 +36,6 @@ export default function LoginPage() {
         {error && <p className={styles.error} role="alert">{error}</p>}
         <button className={styles.submit} disabled={pending}>{pending ? "Veuillez patienter…" : "Se connecter"}<ArrowRight size={17} /></button>
       </form>
-      <Link href="/appointments" className={styles.bookingLink}>Prendre rendez-vous au garage</Link>
     </div><p className={styles.footer}>ATELIER GARAGE · Gestion d&apos;atelier</p></section>
   </main>;
 }

@@ -64,7 +64,7 @@ export default function DailyBookings() {
       {schedule && <p>{dateLabel.format(new Date(schedule.date + "T00:00:00Z"))} · Heure de Tunis</p>}
     </header>
     <div className={styles.share}>
-      <Link href="/appointments">Page de réservation</Link>
+      <Link href="/appointments">Prendre rendez-vous</Link>
       <button type="button" onClick={copyBookingLink}>Copier le lien</button>
       <span role="status">{copied && "Lien copié"}</span>
     </div>
